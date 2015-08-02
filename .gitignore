@@ -1,0 +1,6 @@
+node_modules
+generated
+.idea
+.DS_STORE
+/dist
+*.css

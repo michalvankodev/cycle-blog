@@ -1,0 +1,22 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+  "rules" : {
+    "no-console": 1,
+    "no-debugger": 2,
+    "quotes": [1, "single", "avoid-escape"],
+    "no-shadow": [0],
+    "no-underscore-dangle": [0],
+    "strict": [1, "never"],
+    "no-spaced-func": [1],
+    "space-after-keywords": [1],
+    "no-unused-vars": [2, {"vars": "all", "args": "none"}],
+    "no-unused-expressions": [0],
+    "no-use-before-define": [0]
+
+  }
+}
