@@ -11,6 +11,7 @@ export default {
   spec: source + '**/*.spec.js',
   html: source + '**/*.html',
   less: source + '**/*.less',
+  css: source + '**/*.css',
   output: output,
   indexHtml: './index.html',
   karmaConf : '/../../karma.conf.js'

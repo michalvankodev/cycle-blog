@@ -5,7 +5,7 @@ function main() {
   return {
     DOM: Cycle.Rx.Observable.interval(1000)
       .map(i => CycleDOM.h(
-        'h1', '' + i + ' seconds 123df'
+        'h2', '' + i + ' seconds asdasd123df'
       ))
   };
 }

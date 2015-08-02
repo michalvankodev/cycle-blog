@@ -18,7 +18,8 @@ function reloadFile(event) {
 gulp.task('watch', ['lint', 'serve'], function() {
   w.on('update', bundle);
   gulp.watch(paths.jsBundle).on('change', reloadFile);
-  gulp.watch(paths.html, browserSync.reload)
-  gulp.watch(paths.indexHtml, browserSync.reload)
-  gulp.watch(paths.less, ['less']).on('change', reloadFile);
+  gulp.watch(paths.html, browserSync.reload);
+  gulp.watch(paths.indexHtml, browserSync.reload);
+  gulp.watch(paths.less, ['less']);
+  gulp.watch(paths.css).on('change', reloadFile);
 });
