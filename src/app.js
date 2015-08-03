@@ -1,17 +1,28 @@
 import Cycle from '@cycle/core';
-import CycleDOM from '@cycle/dom';
+import {h, makeDOMDriver} from '@cycle/dom';
+import {navigation} from './navigation';
 
-function main() {
+function view(state) {
+  let navigationItems = [
+    {href: 'home', name: 'Home'},
+    {href: 'articles', name: 'Articles'}
+  ];
+
+  return Cycle.Rx.Observable.just(false).map(just =>
+    h('header', h('blog-navigation', {items: navigationItems}))
+  );
+}
+
+function main({DOM}) {
   return {
-    DOM: Cycle.Rx.Observable.interval(1000)
-      .map(i => CycleDOM.h(
-        'h2', '' + i + ' seconds asdasd123df'
-      ))
+    DOM: view()
   };
 }
 
 let drivers = {
-  DOM: CycleDOM.makeDOMDriver('#app')
+  DOM: makeDOMDriver('#app', {
+    'blog-navigation': navigation
+  })
 };
 
 Cycle.run(main, drivers);
