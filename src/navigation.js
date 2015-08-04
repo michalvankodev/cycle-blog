@@ -14,24 +14,31 @@ export function navigation(responses) {
   function intent(DOM) {
     return {
       navigate$: DOM.get('.navigation a', 'click')
-        .map(ev => ev.target.value)
+        .doOnNext(ev => ev.preventDefault())
+        .map(ev => ev.target.attributes.href.value)
     };
   }
 
   function model(context, action$) {
     let items$ = context.props.get('items').first();
-    return items$;
+
+    let state$ = Cycle.Rx.Observable.combineLatest(items$, action$.navigate$.startWith(false), (items, action) => {
+      return {items, selectedItem: action};
+    });
+    return state$;
   }
 
   function view(state$) {
     return state$.map(state => {
-      let items = state;
-      //let selected = state.value;
+      let items = state.items;
+      let selectedItem = state.selectedItem;
 
       return h('nav.navigation',
-        items.map(item => h('a', {href: item.href}, item.name))
+        items.map(item => {
+          let isSelected = item.href === selectedItem  ? 'selected' : '';
+          return h('a', {href: item.href, className: isSelected}, item.name);
+        })
       );
-
     });
   }
 
