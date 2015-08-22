@@ -16,19 +16,19 @@
   "author": "Michal Vanko",
   "license": "MIT",
   "devDependencies": {
-    "babel": "^5.8.20",
-    "babel-eslint": "^4.0.5",
+    "babel": "^5.8.21",
+    "babel-eslint": "^4.0.10",
     "babelify": "^6.1.3",
     "browser-sync": "^2.8.2",
     "browserify": "^11.0.1",
-    "eslint": "^1.0.0",
+    "eslint": "^1.2.0",
     "gulp": "^3.9.0",
-    "gulp-eslint": "^1.0.0",
+    "eslint": "^1.2.0",
     "gulp-inject": "^1.5.0",
     "gulp-less": "^3.0.3",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-util": "^3.0.6",
-    "karma": "^0.13.3",
+    "karma": "^0.13.9",
     "karma-babel-preprocessor": "^5.2.1",
     "karma-chrome-launcher": "^0.2.0",
     "karma-firefox-launcher": "^0.1.6",
@@ -38,7 +38,7 @@
     "watchify": "^3.3.1"
   },
   "dependencies": {
-    "@cycle/core": "^1.0.2",
-    "@cycle/dom": "^3.2.1"
+    "@cycle/core": "^3.1.0",
+    "@cycle/dom": "^5.0.1"
   }
 }
