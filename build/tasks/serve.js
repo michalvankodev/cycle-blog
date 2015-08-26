@@ -1,19 +1,27 @@
 import gulp from 'gulp';
-import browserSync from 'browser-sync';
+import gutil from 'gulp-util';
+import webpack from 'webpack';
+import WebpackDevServer from 'webpack-dev-server';
+import config from './../../webpack.config.js';
 
-// this task utilizes the browsersync plugin
-// to create a dev server instance
-// at http://localhost:9000
-gulp.task('serve', ['inject', 'browserify'], function(done) {
-  browserSync({
-    open: false,
-    port: 9000,
-    server: {
-      baseDir: ['.'],
-      middleware: [function (req, res, next) {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        next();
-      }]
-    }
-  }, done);
+let devServerConfig = {
+  publicPath: config.output.publicPath,
+  // webpack HMR can't work with lazy mode yet
+  lazy: false,
+  filename: config.output.filename,
+  hot: true,
+  historyApiFallback: true,
+  stats: { colors: true },
+  quiet: true
+};
+
+gulp.task('serve', function(done) {
+  new WebpackDevServer(webpack(config), devServerConfig)
+    .listen(9000, 'localhost', function(err, result) {
+      if (err) {
+        throw new gutil.PluginError('webpack-dev-server', err);
+      }
+      gutil.log('Listening at localhost:9000');
+      done();
+    });
 });

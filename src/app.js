@@ -2,6 +2,7 @@ import Cycle from '@cycle/core';
 import {h, makeDOMDriver} from '@cycle/dom';
 import {renderHeader} from './header/header';
 import {navigation} from './navigation';
+import './app.less';
 
 function view(state) {
 
@@ -21,5 +22,9 @@ let drivers = {
     'blog-navigation': navigation
   })
 };
+
+if (module.hot) {
+  module.hot.accept();
+}
 
 Cycle.run(main, drivers);

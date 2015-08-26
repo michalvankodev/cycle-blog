@@ -7,6 +7,7 @@ export default {
   generated: generated,
   jsBundle: generated + 'bundle.js',
   js: source + '**/!(*.spec).js',
+  jsFiles: source + '**/!(*.spec).js',
   entries: source + 'app.js',
   spec: source + '**/*.spec.js',
   html: source + '**/*.html',
