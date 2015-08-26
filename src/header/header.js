@@ -4,11 +4,11 @@ import {hJSX} from '@cycle/dom';
 let binary = Number(420).toString(2);
 let numberOfZeroes = 16 - binary.length;
 let zeroes = '0'.repeat(numberOfZeroes);
-const fourTwenty = zeroes + binary;
+export const fourTwenty = zeroes + binary;
 
 let navigationItems = [
   { href: 'home', name: 'Home'},
-  { href: 'articles', name: 'Artisssssscless '}
+  { href: 'articles', name: 'Artissscless '}
 ];
 
 export function renderHeader() {

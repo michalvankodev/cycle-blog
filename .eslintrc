@@ -14,7 +14,7 @@
     "strict": [1, "never"],
     "no-spaced-func": [1],
     "space-after-keywords": [1],
-    "no-unused-vars": [2, {"vars": "all", "args": "none"}],
+    "no-unused-vars": [2, {"vars": "all", "args": "none", "varsIgnorePattern": "hJSX"}],
     "no-unused-expressions": [0],
     "no-use-before-define": [0]
 

@@ -10,7 +10,7 @@ import paths from '../paths';
 // Run once
 gulp.task('test', function(done) {
   new karma.Server({
-    configFile: paths.karmaConf,
+    configFile: path.join(__dirname, paths.karmaConf),
     singleRun: true
   }, done).start();
 });
