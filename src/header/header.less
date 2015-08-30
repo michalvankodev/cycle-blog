@@ -1,0 +1,68 @@
+@header-background: #3F79FF;
+
+.site-header {
+  background-color: @header-background;
+  padding: 0.5em 0.6em 0.3em;
+  box-shadow: 0px 2px 8px #0C0C0C;
+
+  h1 {
+    color: #DCDCDC;
+    font-family: 'Source Sans Pro', 'Open Sans', sans-serif;
+    font-weight: 200;
+    text-shadow: 2px 2px 2px #333;
+    margin: 0;
+    font-size: 2em;
+  }
+
+  h2 {
+    text-align: left;
+    padding: 0.7em;
+    margin: 0;
+    color: #DEDEDE;
+    font-weight: normal;
+    text-shadow: 1px 1px 1px #292929;
+  }
+
+  .motto {
+    font-family: 'DejaVu Sans Mono', 'Monospace';
+    font-weight: 300;
+    color: #dedede;
+    text-shadow: 0px 0px 2px #000;
+    font-size: 0.8em;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .header-top-item {
+
+  }
+
+  .navigation {
+    a {
+      color: #E2E2E2;
+      margin: 0px 5px;
+      padding: 3px;
+      border-bottom: 1px solid;
+    }
+
+    .selected {
+      text-shadow: 1px 1px 0px #484848;
+    }
+  }
+}
+
+.navigation {
+  a {
+    text-decoration: none;
+
+  }
+
+  .selected {
+    //font-weight: bold;
+    font-weight: normal;
+  }
+}

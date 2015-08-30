@@ -2,6 +2,8 @@ import Cycle from '@cycle/core';
 import {h, makeDOMDriver} from '@cycle/dom';
 import {renderHeader} from './header/header';
 import {navigation} from './navigation';
+import 'normalize.css';
+import './fonts/dejavu.css';
 import './app.less';
 
 function view(state) {
