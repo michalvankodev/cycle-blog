@@ -15,7 +15,7 @@ let navigationItems = [
 export function renderHeader() {
 
   return (
-    <header className='site-header row'>
+    <header className='site-header'>
       <div className='header-top'>
         <h1 className='header-top-item'>Michal's blog</h1>
         <blog-navigation items={navigationItems} className='header-top-item' />
