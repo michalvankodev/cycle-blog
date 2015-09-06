@@ -1,6 +1,6 @@
 import {h} from '@cycle/dom';
 
-export default function home() {
+export function home(sources) {
   return {
     DOM: h('div',' HOME PAGE YEAY')
   };

@@ -8,17 +8,20 @@ import 'normalize.css';
 import './fonts/dejavu.less';
 import './app.less';
 
-function view(state) {
-  // TODO router view
-  //var routerView = h('div.router-view', 'Here goes big pile of shit');
-  return Cycle.Rx.Observable.just(false).map(just =>
-    h('div#app-container', [renderHeader(), routerView(), renderFooter()])
+function view(drivers) {
+
+  let router = routerView(drivers);
+// DAKDE TU JE TA VEC co nejde ... FUCK IIIIT
+//
+
+  return router.DOM.map(routerView =>
+    h('div#app-container', [renderHeader(), routerView, renderFooter()])
   );
 }
 
 function main(drivers) {
   return {
-    DOM: view()
+    DOM: view(drivers)
   };
 }
 
