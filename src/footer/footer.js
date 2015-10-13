@@ -1,6 +1,6 @@
 /** @jsx hJSX */
 import {hJSX} from '@cycle/dom';
-import './footer.less';
+// import './footer.less';
 
 export function renderFooter() {
   return (

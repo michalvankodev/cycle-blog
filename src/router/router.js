@@ -1,31 +1,30 @@
 import {Rx} from '@cycle/core';
 import {h} from '@cycle/dom';
 import {home} from '../pages/home';
+import {articles} from '../pages/articles';
+import switchPath from 'switch-path';
 
-export function routerView(sources, name = '') {
+export function routerView(drivers, name = '') {
 
-  let domNavigate$ = sources.DOM.select('a').events('click')
-    .doOnNext(ev => ev.preventDefault())
-    .map(ev => ev.target.attributes.href.value)
-    .startWith('home');
+  let routes = {
+    '/home': 'home',
+    '/articles': 'articles'
+  };
 
-  let navigateTo$ = domNavigate$;
-  //Rx.Observable.merge(domNavigate$, sources.events.navigateTo$);
-
-  let routes = Rx.Observable.just([
-    { href: 'home', name: 'Home', view: home},
-    { href: 'articles', name: 'Articles '}
-  ]);
-
-  let activeRoute$ = Rx.Observable.combineLatest(routes, navigateTo$, function (routes, navigateTo) {
-      return routes.find(route => route.href == navigateTo);
+  const value$ = drivers.History.map(location => { // History Location Object
+    let {path, value} = switchPath(location.pathname, routes)
+    return value
   });
 
-  let routedView$ = activeRoute$.map(route => route.view(sources));
+  let routeMappings = {
+    'home': home,
+    'articles': articles
+  };
 
-  let routerView$ = routedView$.map(view => h('div.router-view', view.DOM));
-
+  const view$ = value$.map(value => h('div.router-view', routeMappings[value](drivers).DOM));
+  const http$ = value$.map(value => routeMappings[value](drivers).HTTP)
   return {
-    DOM: routerView$
+    DOM: view$,
+    HTTP: http$
   };
 }

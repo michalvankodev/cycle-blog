@@ -3,8 +3,8 @@ var webpack = require('webpack');
 var path = require('path');
 
 module.exports = {
-  devtool: 'source-map',
-  entry: ['webpack/hot/dev-server', './src/app'],
+  devtool: 'eval',
+  entry: ['webpack/hot/dev-server', './src/client'],
   output: {
       path: path.join(__dirname, 'generated'),
       filename: 'bundle.js',
