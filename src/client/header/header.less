@@ -1,9 +1,9 @@
-//@header-background: #3F79FF;
+@header-background: #3F79FF;
 
 .site-header {
-  //background-color: @header-background;
+  background-color: @header-background;
   padding: 0.5em 0.6em 0.3em;
-  box-shadow: 0px 2px 8px #0C0C0C;
+  box-shadow: 0px -2px 8px #484848 inset;
 
   h1 {
     color: #DCDCDC;
@@ -23,6 +23,10 @@
     text-shadow: 1px 1px 1px #292929;
   }
 
+  a {
+    text-decoration: none;
+  }
+
   .motto {
     font-family: 'DejaVu Sans Mono', 'Monospace';
     font-weight: 300;
@@ -35,34 +39,27 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    flex-wrap: wrap;
   }
 
   .header-top-item {
 
   }
-
-  .navigation {
-    a {
-      color: #E2E2E2;
-      margin: 0px 5px;
-      padding: 3px;
-      border-bottom: 1px solid;
-    }
-
-    .selected {
-      text-shadow: 1px 1px 0px #484848;
-    }
-  }
 }
 
-.navigation {
+.site-header nav {
+  margin-top: 0.4em;
+
   a {
-    text-decoration: none;
+    color: #E6E6E6;
 
-  }
+    &.active {
+      color: #eee;
+      text-shadow: 0px 0px 2px #fff;
+    }
 
-  .selected {
-    //font-weight: bold;
-    font-weight: normal;
+    @media (min-width: 420px) {
+
+    }
   }
 }

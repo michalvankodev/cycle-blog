@@ -40,6 +40,11 @@ function wrapAppResultWithBoilerplate(appFn) {
 
 let server = express();
 server.use('/generated', express.static('generated'));
+server.use('/api/test/', function(req, res) {
+  console.log('APITESTCALL')
+  res.send({text: 'teststststststtttt'});
+  res.end();
+})
 
 server.use(function (req, res) {
   // Ignore favicon requests

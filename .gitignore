@@ -4,3 +4,4 @@ generated
 .DS_STORE
 /dist
 *.css
+*.log
