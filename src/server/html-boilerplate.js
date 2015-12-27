@@ -15,7 +15,7 @@ export function wrapVTreeWithHTMLBoilerplate(vtree) {
     ]),
     body([
       div('#app', [vtree]),
-      script({src: `dist/app.js`})
+      script({src: `static/bundle.js`})
     ])
   ])
 }
