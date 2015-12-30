@@ -1,13 +1,13 @@
 import {h} from '@cycle/dom'
-import Rx from 'rx'
+import {Observable} from 'rx'
 
-export default function articles(drivers) {
-  const request$ = Rx.Observable.just('/api/test')
+export default function articles({HTTP}) {
+  const request$ = Observable.just('http://localhost:8000/api/articles')
 
-  const testValue$ = drivers.HTTP
-    .filter(res$ => res$.request === '/api/test')
+  const testValue$ = HTTP.filter(res$ => res$.request.url === 'http://localhost:8000/api/articles')
     .mergeAll()
     .map(res => res.text)
+    .catch(() => 'error')
     .startWith('loading ..')
 
   const vtree$ = testValue$.map(text => h('div', text))

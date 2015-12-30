@@ -28,6 +28,5 @@ export function wrapVTreeWithHTMLBoilerplate(vtree) {
  */
 export function prependDoctype(html) {
   console.log(html);
-  console.log(html.toString())
   return `<!doctype html>${html}`
 }

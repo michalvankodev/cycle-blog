@@ -27,7 +27,7 @@ let bundle = browserify({
   packageCache: {},
   cache: {},
   debug: true
-}).transform(babelify).plugin(browserifyHMR)
+}).transform(babelify, {sourceMaps: false}).plugin(browserifyHMR)
 
 let watchBundle = watchify(bundle)
 

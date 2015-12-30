@@ -12,13 +12,13 @@ function clientSideApp(responses) {
 
 let drivers = {
   DOM: makeDOMDriver('#app'),
+  HTTP: makeHTTPDriver(),
   History: makeHistoryDriver({
     hash: false, // default, true if your browser doesn't support History API
     queries: true, // default, toggle QuerySupport
     basename: '' // default, sets up BasenameSupport
     // all other history Options
   }),
-  HTTP: makeHTTPDriver()
 }
 
 Cycle.run(clientSideApp, drivers)
