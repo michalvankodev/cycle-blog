@@ -6,7 +6,6 @@ import {createLocation} from 'history'
 import {makeHTTPDriver} from '@cycle/http'
 import {App} from '../client/app'
 import {wrapVTreeWithHTMLBoilerplate, prependDoctype} from './html-boilerplate'
-import winston from 'winston'
 
 function wrapAppResultWithBoilerplate(appFn) {
   return function wrappedAppFn(ext) {

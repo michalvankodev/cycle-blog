@@ -1,10 +1,10 @@
-import koaRouter from 'koa-router';
-import users from './users';
-import articles from './articles';
+import koaRouter from 'koa-router'
+import users from './users'
+import articles from './articles'
 
-let router = koaRouter();
+let router = koaRouter()
 
-router.use('/users', users.routes());
-router.use('/articles', articles.routes());
+router.use('/users', users.routes())
+router.use('/articles', articles.routes())
 
-export default router;
+export default router

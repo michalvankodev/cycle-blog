@@ -18,7 +18,7 @@ let drivers = {
     queries: true, // default, toggle QuerySupport
     basename: '' // default, sets up BasenameSupport
     // all other history Options
-  }),
+  })
 }
 
 Cycle.run(clientSideApp, drivers)

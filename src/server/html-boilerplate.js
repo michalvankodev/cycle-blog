@@ -6,7 +6,6 @@ import {html as vhtml, head, title, link, body, div, script} from '@cycle/dom'
  * @param {Object} vtree Virtual DOM created by an App to be rendered into HTML
  * @returns {Object} Virtual DOM of the HTML to be rendered
  */
-
 export function wrapVTreeWithHTMLBoilerplate(vtree) {
   return vhtml([
     head([
@@ -27,6 +26,5 @@ export function wrapVTreeWithHTMLBoilerplate(vtree) {
  * @return {string} html prepended by doctype
  */
 export function prependDoctype(html) {
-  console.log(html);
   return `<!doctype html>${html}`
 }
