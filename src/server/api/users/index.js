@@ -3,6 +3,6 @@ import {getUser} from './user-controller';
 
 let router = koaRouter();
 
-router.get('/:id', getUser);
+router.get('/:id', getUser)
 
 export default router;
