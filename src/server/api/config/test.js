@@ -3,7 +3,7 @@ export default {
     uri: 'mongodb://localhost/michalsBlogTest'
   },
 
-  seedDB: true,
+  seedDB: false,
 
   port: process.env.PORT || 9999
 };

@@ -6,4 +6,4 @@ export default {
   seedDB: true,
 
   port: process.env.PORT || 8000
-};
+}

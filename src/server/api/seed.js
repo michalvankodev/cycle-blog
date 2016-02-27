@@ -1,10 +1,24 @@
 import co from 'co'
 import Article from './articles/articles-model'
+import User from './users/user-model'
+
+let adminInfo = {
+  username: 'michal',
+  password: 'admin',
+  email: 'mklakakilli@gmail.com',
+  role: 'admin'
+}
+
+let moderatorInfo = {
+  username: 'sarka',
+  password: 'moderator',
+  email: 'no@email.com',
+  role: 'moderator'
+}
 
 let seedArticle1 = {
   title: 'Testing Article 1',
   seoTitle: 'testing-article',
-//  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: 'Author is required' },
   createdDate: new Date(2000, 5, 1, 15, 30, 0),
   lastUpdated: new Date(2000, 5, 1, 20, 45, 0),
   body: '<p>This is a testing article</p>',
@@ -41,7 +55,6 @@ let seedArticleComment3 = {
 let seedArticle2 = {
   title: 'Testing Article 2',
   seoTitle: 'testing-article-two',
-//  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: 'Author is required' },
   createdDate: new Date(2009, 5, 1, 15, 30, 0),
   lastUpdated: new Date(2009, 5, 1, 20, 45, 0),
   body: '<p>This is a second testing article with comments</p>',
@@ -51,7 +64,6 @@ let seedArticle2 = {
 let seedArticle3 = {
   title: 'Draft Article',
   seoTitle: 'just-draft-article',
-//  author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: 'Author is required' },
   createdDate: new Date(2009, 1, 1, 15, 30, 0),
   lastUpdated: new Date(2009, 1, 1, 20, 45, 0),
   body: '<p>This is a testing draft article</p>',
@@ -59,6 +71,22 @@ let seedArticle3 = {
 }
 
 export default co.wrap(function* seed() {
+  // remove all users
+  yield User.remove()
+  // create admin and save his password
+  let admin = new User(adminInfo)
+  admin.hashedPassword = yield admin.encryptPassword(adminInfo.password)
+  yield admin.save()
+  let moderator = new User(moderatorInfo)
+  moderator.hashedPassword = yield moderator.encryptPassword(
+    moderatorInfo.password
+  )
+  yield moderator.save()
+
+  seedArticle1.author = admin._id
+  seedArticle2.author = admin._id
+  seedArticle3.author = admin._id
+
   yield Article.remove()
   yield Article.create(seedArticle1, seedArticle2, seedArticle3)
   let secondArticle = yield Article.findBySeoTitle('testing-article-two')
