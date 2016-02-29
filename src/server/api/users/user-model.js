@@ -33,10 +33,11 @@ User.methods.encryptPassword = function generatePassword(password) {
  *  passwords match
  */
 User.methods.validatePassword = function authenticateUser(enteredPwd) {
+  let hashedPwd = this.hashedPassword
   return new Promise(function authPromise(resolve, reject) {
     bcrypt.compare(
       enteredPwd,
-      this.hashedPassword,
+      hashedPwd,
       function compareCb(err, same) {
         if (err) { reject(err) }
         resolve(same)
@@ -45,14 +46,36 @@ User.methods.validatePassword = function authenticateUser(enteredPwd) {
   })
 }
 
-User.statics.findByUsername = function findByUsername(username, cb) {
-  return this.findOne({username}, cb)
+/**
+ * Query for a user based on his username
+ *
+ * @param {string} username Username of the user queried
+ * @param {Function} cb Callback to be called when query is done
+ *
+ * @return {mongoose.Query} Mongoose Query which is mapping username to username
+ */
+User.statics.findByUsername = function findByUsername(username, ...rest) {
+  return this.findOne({username}, ...rest)
 }
 
+/**
+ * Get profile information of the user.
+ *
+ * @param {[type]} 'profile' [description]
+ *
+ * @return {[type]} [description]
+ */
 User.virtual('profile').get(function getUserProfile() {
   return {
     username: this.username,
     email: this.email,
+    role: this.role
+  }
+})
+
+User.virtual('token').get(function getToken() {
+  return {
+    _id: this._id,
     role: this.role
   }
 })

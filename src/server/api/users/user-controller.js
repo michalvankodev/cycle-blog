@@ -8,7 +8,6 @@ import User from './user-model'
 export function* getUser(next) {
   let query = 'michal' // TODO
   let user = yield User.findByUsername(query)
-
   if (user) {
     this.body = {
       user: user.profile

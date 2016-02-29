@@ -1,8 +1,8 @@
-import koaRouter from 'koa-router';
-import {getUser} from './user-controller';
+import koaRouter from 'koa-router'
+import {getUser} from './user-controller'
 
-let router = koaRouter();
+let router = koaRouter()
 
 router.get('/:id', getUser)
 
-export default router;
+export default router

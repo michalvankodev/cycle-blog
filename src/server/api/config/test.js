@@ -5,5 +5,7 @@ export default {
 
   seedDB: false,
 
-  port: process.env.PORT || 9999
-};
+  port: process.env.PORT || 9999,
+
+  tokenSecret: 'testing secret'
+}
