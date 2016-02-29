@@ -6,7 +6,6 @@ import supertest from 'supertest'
 let request = supertest.agent(app.callback())
 
 test('Articles API lists all articles', co.wrap(function* listAllTest(t) {
-  t.plan(2)
   request
     .get('/articles')
     .expect(200)
@@ -18,6 +17,7 @@ test('Articles API lists all articles', co.wrap(function* listAllTest(t) {
 
       t.equal(res.body.results.length, 3, 'Should fetch 3 articles')
       t.pass('Successfully fetched all articles')
+      t.end()
     })
 }))
 
@@ -43,5 +43,6 @@ test('Articles API retrieves article', co.wrap(function* getArticleTest(t) {
         '<p>This is a testing article</p>',
         'Article body should be present'
       )
+      t.end()
     })
 }))

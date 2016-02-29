@@ -73,6 +73,11 @@ User.virtual('profile').get(function getUserProfile() {
   }
 })
 
+/**
+ * Get information that is going to be tokenized
+ *
+ * @return {Object} Object that is going to be tokenized
+ */
 User.virtual('token').get(function getToken() {
   return {
     _id: this._id,
