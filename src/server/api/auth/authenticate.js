@@ -46,6 +46,3 @@ export default function* authenticate(next) {
 
   yield next
 }
-
-// TODO TESTS!!! TEST!!! TESTS!!!!
-// TODO is authenticated middleware

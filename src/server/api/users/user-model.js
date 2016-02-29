@@ -9,22 +9,6 @@ let User = new Schema({
 })
 
 /**
- * Encrypts password with bcrypt.
- *
- * @param {string} password Password to be encrypted
- *
- * @return {Promise<string, Error>} Promise resolved with encrypted password
- */
-User.methods.encryptPassword = function generatePassword(password) {
-  return new Promise(function genPwdPromise(resolve, reject) {
-    bcrypt.hash(password, 10, function hashCb(err, encrypted) {
-      if (err) { reject(err) }
-      resolve(encrypted)
-    })
-  })
-}
-
-/**
  * Validates if the enteredPwd is the same as stored hashedPassword.
  *
  * @param {string} enteredPwd Password to be validated

@@ -1,6 +1,7 @@
 import co from 'co'
 import Article from './articles/articles-model'
 import User from './users/user-model'
+import encryptPassword from './users/encrypt-password'
 
 let adminInfo = {
   username: 'michal',
@@ -75,12 +76,10 @@ export default co.wrap(function* seed() {
   yield User.remove()
   // create admin and save his password
   let admin = new User(adminInfo)
-  admin.hashedPassword = yield admin.encryptPassword(adminInfo.password)
+  admin.hashedPassword = yield encryptPassword(adminInfo.password)
   yield admin.save()
   let moderator = new User(moderatorInfo)
-  moderator.hashedPassword = yield moderator.encryptPassword(
-    moderatorInfo.password
-  )
+  moderator.hashedPassword = yield encryptPassword(moderatorInfo.password)
   yield moderator.save()
 
   seedArticle1.author = admin._id
