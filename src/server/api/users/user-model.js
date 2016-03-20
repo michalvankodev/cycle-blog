@@ -42,6 +42,14 @@ User.statics.findByUsername = function findByUsername(username, ...rest) {
   return this.findOne({username}, ...rest)
 }
 
+User.statics.isStrongPassword = function isStrongPassword(password) {
+  let match = password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{6,}$/)
+  if (match === null) {
+    return false
+  }
+  return true
+}
+
 /**
  * Get profile information of the user.
  *

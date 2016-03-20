@@ -5,7 +5,7 @@ import jwt from 'koa-jwt'
 
 let router = koaRouter()
 
-router.get('/:id', getUser)
+router.get('/:username', getUser)
 router.post('/', jwt({secret: config.tokenSecret}), addNewUser)
 
 // TODO Create New User
