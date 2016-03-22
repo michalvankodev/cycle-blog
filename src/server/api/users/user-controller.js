@@ -32,13 +32,23 @@ export function* addNewUser(next) {
   let usefullData = pick(usefullFields, this.request.body)
   let password = this.request.body.password
 
-  winston.info('tady tady')
-  let validPassword = yield User.validatePassword(password)
-
-  if (validPassword) {
+  if (User.isStrongPassword(password)) {
     usefullData.hashedPassword = yield encryptPassword(password)
-    let user = yield User.create(usefullData)
-    //TODO VALIDATION
+
+    let user
+    try {
+      user = yield User.create(usefullData)
+    }
+    catch (e) {
+      this.status = 400
+      this.body = {
+        success: false,
+        message: `Unable to save user. ${e.message}`
+      }
+      yield next
+      return
+    }
+
     this.status = 201
     this.body = {
       success: true,

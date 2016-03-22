@@ -3,6 +3,8 @@ import co from 'co'
 import app from '../index'
 import supertest from 'supertest'
 
+let request = supertest.agent(app.callback())
+
 export function getAdminToken() {
   let requestBody = {
     username: 'michal',
@@ -22,8 +24,6 @@ export function getAdminToken() {
     })
   })
 }
-
-let request = supertest.agent(app.callback())
 
 test('User API get single user', co.wrap(function* getSingleUserTest(t) {
   const username = 'michal'
@@ -61,28 +61,24 @@ test('User API get single user', co.wrap(function* getSingleUserTest(t) {
 test(
   'User API admin should be able do add new user with correct data',
   co.wrap(function* addNewUserTest(t) {
-    t.error('not implemented yet')
-    t.end()
     const newUser = {
       username: 'Tester',
       email: 'testing@awesome.com',
       role: 'moderator',
-      password: 'trickyone'
+      password: 'TrickyOne31'
     }
-    t.comment('aspontiu')
     const token = yield getAdminToken()
-    t.comment(`token je: ${token}`)
+
     request.post('/users/')
-      .auth(null, null, true, token)
+      .set('authorization', `Bearer ${token}`)
       .send(newUser)
       .expect(201)
       .expect('Content-Type', 'application/json; charset=utf-8')
       .end((err, res) => {
-        t.comment('hmm')
         if (err) {
           t.error(err, err.message)
+          t.end()
         }
-        t.comment('hlhalhahlo')
         t.ok(res.body.success, 'Should indicate successful request')
         t.ok(res.body.message, 'Message with indication should be visible')
         t.equal(
@@ -95,6 +91,62 @@ test(
           res.body.user.hashedPassword,
           'Hashed password should not be visible'
         )
+        t.end()
+      })
+  })
+)
+
+test(
+  'User API admin should not be able do add new user with incorrect data',
+  co.wrap(function* addNewWrongUserTest(t) {
+    const incorrectUserData = {
+      username: 'GoodTester',
+      email: 'testinsome.com', // wrong email
+      role: 'moderator',
+      password: 'TrickyOne31'
+    }
+    const token = yield getAdminToken()
+
+    request.post('/users/')
+      .set('authorization', `Bearer ${token}`)
+      .send(incorrectUserData)
+      .expect(400)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .end((err, res) => {
+        if (err) {
+          t.error(err, err.message)
+          t.end()
+        }
+        t.notOk(res.body.success, 'Should indicate unsuccessful request')
+        t.ok(res.body.message, 'Message with indication should be visible')
+        t.end()
+      })
+  })
+)
+
+test(
+  'User API admin should not be able do add new user with weak password',
+  co.wrap(function* addNewWrongUserTest(t) {
+    const userDataWithWeakPassword = {
+      username: 'GoodTester',
+      email: 'testing@awesome.com',
+      role: 'moderator',
+      password: 'weakpassword'
+    }
+    const token = yield getAdminToken()
+
+    request.post('/users/')
+      .set('authorization', `Bearer ${token}`)
+      .send(userDataWithWeakPassword)
+      .expect(400)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .end((err, res) => {
+        if (err) {
+          t.error(err, err.message)
+          t.end()
+        }
+        t.notOk(res.body.success, 'Should indicate unsuccessful request')
+        t.ok(res.body.message, 'Message with indication should be visible')
         t.end()
       })
   })

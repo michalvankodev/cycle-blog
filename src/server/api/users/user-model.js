@@ -2,9 +2,9 @@ import {Schema, default as mongoose} from 'mongoose'
 import bcrypt from 'bcrypt'
 
 let User = new Schema({
-  username: String,
+  username: {type: String, required: true, unique: true},
   hashedPassword: String,
-  email: {type: String, lowercase: true},
+  email: {type: String, lowercase: true, required: true},
   role: {type: String, enum: ['admin', 'moderator']}
 })
 
@@ -75,6 +75,21 @@ User.virtual('token').get(function getToken() {
     _id: this._id,
     role: this.role
   }
+})
+
+/**
+ * Email validation
+ *
+ * @param {string} email Email of a user.
+ *
+ * @return {boolean} Indication if the provided value is valid.
+ */
+User.path('email').validate(email => {
+  const match = email.match(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/)
+  if (match === null) {
+    return false
+  }
+  return true
 })
 
 export default mongoose.model('User', User)
