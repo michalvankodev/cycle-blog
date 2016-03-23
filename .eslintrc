@@ -6,12 +6,17 @@
     "mocha": true,
     "es6": true
   },
+  "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module"
+  },
   "rules" : {
     "no-console": 1,
     "no-debugger": 2,
     "quotes": [1, "single", "avoid-escape"],
     "comma-dangle": [2, "never"],
     "new-cap": [0],
-    "brace-style": [2, "stroustrup", { "allowSingleLine": true }]
+    "brace-style": [2, "stroustrup", { "allowSingleLine": true }],
+    "cycle/brace-style": 0
   }
 }
