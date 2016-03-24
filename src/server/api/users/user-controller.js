@@ -10,7 +10,17 @@ import winston from 'winston'
  * @param {Function} next koa next middleware
  */
 export function* getUser(next) {
-  let user = yield User.findByUsername(this.params.username)
+  let user
+  try {
+    user = yield User.findByUsername(this.params.username)
+  }
+  catch(e) {
+    this.status = 500
+    this.body = {
+      success: false,
+      message: `Unable to find user. ${e.message}`
+    }
+  }
   if (user) {
     this.body = {
       user: user.profile
@@ -18,6 +28,10 @@ export function* getUser(next) {
   }
   else {
     this.status = 404
+    this.body = {
+      success: false,
+      message: 'Unable to find user.'
+    }
   }
   yield next
 }
@@ -39,7 +53,7 @@ export function* addNewUser(next) {
     try {
       user = yield User.create(usefullData)
     }
-    catch (e) {
+    catch(e) {
       this.status = 400
       this.body = {
         success: false,
@@ -67,7 +81,6 @@ export function* addNewUser(next) {
   yield next
 }
 
-// TODO Update User
 /**
  * Update a existing user from POST parameters.
  *
@@ -76,11 +89,10 @@ export function* addNewUser(next) {
 export function* updateUser(next) {
   const usefullFields = ['username', 'email', 'role']
   let usefullData = pick(usefullFields, this.request.body)
-  // TODO admin can modify everyone others only themselves
   let user
-  const issuer = this.state.user
+  const actor = this.state.user
 
-  if (issuer.role === 'admin' || issuer._id === this.params.id) {
+  if (actor.role === 'admin' || actor._id === this.params.id) {
     try {
       user = yield User.findByIdAndUpdate(
         this.params.id,
@@ -91,7 +103,7 @@ export function* updateUser(next) {
         }
       )
     }
-    catch (e) {
+    catch(e) {
       this.status = 500
       this.body = {
         success: false,
@@ -117,5 +129,50 @@ export function* updateUser(next) {
   }
   yield next
 }
+
+/**
+ * Delete a existing user from POST parameters.
+ *
+ * @param {Function} next koa next middleware
+ */
+export function* deleteUser(next) {
+  if (this.state.user.role !== 'admin') {
+    this.status = 403
+    this.body = {
+      success: false,
+      message: 'You are not permitted to modify other users.'
+    }
+    yield next
+    return
+  }
+
+  let user
+  try {
+    user = User.findByIdAndRemove(this.params.id)
+  }
+  catch(e) {
+    this.status = 500
+    this.body = {
+      success: false,
+      message: `Unable to delete user. ${e.message}`
+    }
+  }
+
+  if (user) {
+    this.status = 200
+    this.body = {
+      success: true,
+      message: `User ${user.username} was successfully deleted.`
+    }
+  }
+  else {
+    this.status = 404
+    this.body = {
+      success: false,
+      message: 'Unable to find user.'
+    }
+  }
+}
+
 // TODO Update Password
 // TODO Get Multiple users

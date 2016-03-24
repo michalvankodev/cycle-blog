@@ -271,5 +271,48 @@ test('Users API tests', co.wrap(function* userAPITests(sub) {
         })
     })
   )
-  // TODO DELETE USER
+
+  sub.test(
+    'Moderator should not be able to delete other users',
+    co.wrap(function* deleteUserByModTest(t) {
+      const token = yield getModeratorToken()
+      const user = yield User.findByUsername('michal')
+
+      request.delete(`/users/${user.id}`)
+        .set('authorization', `Bearer ${token}`)
+        .expect(403)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+            t.end()
+          }
+          t.notOk(res.body.success, 'Should indicate unsuccessful request')
+          t.ok(res.body.message, 'Message with indication should be visible')
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'Admin should be able to delete other users',
+    co.wrap(function* deleteUserByAdminTest(t) {
+      const token = yield getAdminToken()
+      const user = yield User.findByUsername('sarka')
+
+      request.delete(`/users/${user.id}`)
+        .set('authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+            t.end()
+          }
+          t.ok(res.body.success, 'Should indicate successful request')
+          t.ok(res.body.message, 'Message with indication should be visible')
+          t.end()
+        })
+    })
+  )
 }))
