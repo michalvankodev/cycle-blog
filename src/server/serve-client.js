@@ -3,6 +3,7 @@ import {Observable} from 'rx'
 import {makeHTMLDriver} from '@cycle/dom'
 import {createServerHistory, makeHistoryDriver} from '@cycle/history'
 import {makeHTTPDriver} from '@cycle/http'
+import {makeRouterDriver} from 'cyclic-router'
 import {App} from '../client/app'
 import {wrapVTreeWithHTMLBoilerplate, prependDoctype} from './html-boilerplate'
 
@@ -15,7 +16,6 @@ function wrapAppResultWithBoilerplate(appFn) {
     )
     return {
       DOM: wrappedVTree$,
-      History: requests.History.take(1),
       HTTP: requests.HTTP
     }
   }
@@ -26,7 +26,7 @@ export function* serveClient(url = '', next) {
   const history = createServerHistory()
   let {sources} = Cycle.run(wrappedAppFn, {
     DOM: makeHTMLDriver(),
-    History: makeHistoryDriver(history),
+    router: makeRouterDriver(history),
     HTTP: makeHTTPDriver()
   })
   history.push(history.createLocation(this.request.url))

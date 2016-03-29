@@ -4,6 +4,7 @@ let {makeHTTPDriver} = require('@cycle/http')
 let {App} = require('./client/app')
 import {createHistory} from 'history'
 import {makeHistoryDriver, filterLinks} from '@cycle/history'
+import {makeRouterDriver} from 'cyclic-router'
 
 function clientSideApp(responses) {
   let requests = App(responses)
@@ -14,7 +15,7 @@ const history = createHistory()
 let drivers = {
   DOM: makeDOMDriver('#app'),
   HTTP: makeHTTPDriver(),
-  History: makeHistoryDriver(history)
+  router: makeRouterDriver(history)
 }
 
 Cycle.run(clientSideApp, drivers)

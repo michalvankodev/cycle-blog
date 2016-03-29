@@ -1,20 +1,33 @@
+import {Observable} from 'rx'
 import {renderHeader} from './header/header'
 import {renderFooter} from './footer/footer'
 import {div} from '@cycle/dom'
-import router from './router/router'
-import {Observable} from 'rx'
+import Home from './pages/home'
+import Articles from './pages/articles'
+import Admin from './admin'
+
+const routes = {
+  '/': Home,
+  '/home': Home,
+  '/articles': Articles,
+  '/admin': Admin
+}
+
+function view(children) {
+  return div('.app-view', [
+    renderHeader(),
+    children,
+    renderFooter()
+  ])
+}
 
 export function App(sources) {
   // routing
-  const url$ = sources.DOM.select('a').events('click')
-    .map(e => e.target.href)//.filter(filterLinks)
-
-  const mainRouter = router(sources)
-
-  const vtree$ = mainRouter.DOM.map(routerVTree =>
-    div('#app-container', [renderHeader(), routerVTree, renderFooter()])
+  const mainRouter$ = sources.router.define(routes)
+  const children$ = mainRouter$.map(
+    ({path, value}) => value({...sources, router: sources.router.path(path)})
   )
-
+  const vtree$ = children$.map(x => x.DOM).map(view)
   const http$ = Observable.just({})
 
   // http$.subscribe((request) => {
@@ -23,7 +36,6 @@ export function App(sources) {
 
   return {
     DOM: vtree$,
-    History: url$,
     HTTP: http$
   }
 }
