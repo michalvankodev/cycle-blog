@@ -19,9 +19,8 @@ app.use(mount('/api', apiApp))
 
 app.use(route.get('/static/bundle.js', serveBundle))
 
-let client = route.get('/:url?', serveClient)
-client.unless = unless
-app.use(client.unless({path: [/^\/static\//, /^\/api\//]}))
+serveClient.unless = unless
+app.use(serveClient.unless({path: [/^\/static\//, /^\/api\//]}))
 
 // let options = {
 //   key: fs.readFileSync(__dirname + '/dummy/localhost.key'),

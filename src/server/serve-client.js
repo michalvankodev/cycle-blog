@@ -21,7 +21,7 @@ function wrapAppResultWithBoilerplate(appFn) {
   }
 }
 
-export function* serveClient(url = '', next) {
+export function* serveClient(next) {
   let wrappedAppFn = wrapAppResultWithBoilerplate(App)
   const history = createServerHistory()
   let {sources} = Cycle.run(wrappedAppFn, {
@@ -31,7 +31,8 @@ export function* serveClient(url = '', next) {
   })
   history.push(history.createLocation(this.request.url))
   console.log('URL IS ', this.request.url)
-  let html$ = sources.DOM.map(prependDoctype)
+  let html$ = sources.DOM.map(prependDoctype).do(x=>console.log(x))
+
 
   this.body = yield html$.toPromise()
   yield next
