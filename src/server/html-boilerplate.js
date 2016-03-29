@@ -9,12 +9,11 @@ import {html as vhtml, head, title, link, body, div, script} from '@cycle/dom'
 export function wrapVTreeWithHTMLBoilerplate(vtree) {
   return vhtml([
     head([
-      title("Michal's blog"),
-      link({href: `dist/styles.css`, rel: `stylesheet`})
+      title("Michal's blog")
     ]),
     body([
       div('#app', [vtree]),
-      script({src: `static/bundle.js`})
+      script({src: `/static/bundle.js`})
     ])
   ])
 }

@@ -15,7 +15,7 @@ const history = createHistory()
 let drivers = {
   DOM: makeDOMDriver('#app'),
   HTTP: makeHTTPDriver(),
-  router: makeRouterDriver(history)
+  router: makeRouterDriver(history, {capture: true})
 }
 
 Cycle.run(clientSideApp, drivers)
