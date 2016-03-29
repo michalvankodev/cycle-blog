@@ -1,8 +1,7 @@
 import Cycle from '@cycle/core'
 import {Observable} from 'rx'
 import {makeHTMLDriver} from '@cycle/dom'
-import {makeServerHistoryDriver} from '@cycle/history'
-import {createLocation} from 'history'
+import {createServerHistory, makeHistoryDriver} from '@cycle/history'
 import {makeHTTPDriver} from '@cycle/http'
 import {App} from '../client/app'
 import {wrapVTreeWithHTMLBoilerplate, prependDoctype} from './html-boilerplate'
@@ -10,7 +9,7 @@ import {wrapVTreeWithHTMLBoilerplate, prependDoctype} from './html-boilerplate'
 function wrapAppResultWithBoilerplate(appFn) {
   return function wrappedAppFn(ext) {
     let requests = appFn(ext)
-    let vtree$ = requests.DOM.last()
+    let vtree$ = requests.DOM.take(1)
     let wrappedVTree$ = Observable.combineLatest(vtree$,
       wrapVTreeWithHTMLBoilerplate
     )
@@ -22,17 +21,18 @@ function wrapAppResultWithBoilerplate(appFn) {
   }
 }
 
-export function serveClient() {
-  return function* serve(next) {
-    let wrappedAppFn = wrapAppResultWithBoilerplate(App)
-    let {sources, sinks} = Cycle.run(wrappedAppFn, {
-      DOM: makeHTMLDriver(),
-      History: makeServerHistoryDriver(createLocation(this.url)),
-      HTTP: makeHTTPDriver()
-    })
-    let html$ = sources.DOM.map(prependDoctype)
+export function* serveClient(url = '', next) {
+  let wrappedAppFn = wrapAppResultWithBoilerplate(App)
+  const history = createServerHistory()
+  let {sources} = Cycle.run(wrappedAppFn, {
+    DOM: makeHTMLDriver(),
+    History: makeHistoryDriver(history),
+    HTTP: makeHTTPDriver()
+  })
+  history.push(history.createLocation(this.request.url))
+  console.log('URL IS ', this.request.url)
+  let html$ = sources.DOM.map(prependDoctype)
 
-    this.body = yield html$.toPromise()
-    yield next
-  }
+  this.body = yield html$.toPromise()
+  yield next
 }

@@ -1,30 +1,34 @@
-import {Rx} from '@cycle/core';
-import {h} from '@cycle/dom';
-import {home} from '../pages/home';
-import {articles} from '../pages/articles';
-import switchPath from 'switch-path';
+import {div} from '@cycle/dom'
+import {home} from '../pages/home'
+import {articles} from '../pages/articles'
+import Admin from '../admin'
+import switchPath from 'switch-path'
 
-export function routerView(drivers, name = '') {
-
+export default function routerView(sources) {
   let routes = {
+    '/': 'home',
     '/home': 'home',
-    '/articles': 'articles'
-  };
+    '/articles': 'articles',
+    '/admin': 'admin'
+  }
 
-  const value$ = drivers.History.map(location => { // History Location Object
-    let {path, value} = switchPath(location.pathname, routes)
+  const value$ = sources.History.map(location => { // History Location Object
+    let {value} = switchPath(location.pathname, routes)
     return value
-  });
+  })
 
   let routeMappings = {
-    'home': home,
-    'articles': articles
-  };
+    home: home,
+    articles: articles,
+    admin: Admin
+  }
 
-  const view$ = value$.map(value => h('div.router-view', routeMappings[value](drivers).DOM));
-  const http$ = value$.map(value => routeMappings[value](drivers).HTTP)
+  const view$ = value$.map(value =>
+    div('.router-view', routeMappings[value](sources).DOM)
+  )
+  const http$ = value$.map(value => routeMappings[value](sources).HTTP)
   return {
     DOM: view$,
     HTTP: http$
-  };
+  }
 }

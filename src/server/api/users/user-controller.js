@@ -2,6 +2,7 @@ import User from './user-model'
 import encryptPassword from './encrypt-password'
 import {pick} from 'ramda'
 import winston from 'winston'
+import {getConditions, getOptions} from '../queryparser'
 
 // TODO Get User
 /**
@@ -174,5 +175,110 @@ export function* deleteUser(next) {
   }
 }
 
-// TODO Update Password
-// TODO Get Multiple users
+/**
+ * Get list of users for a given query.
+ *
+ * @param {Function} next koa next middleware
+ */
+export function* getUserList(next) {
+  let defaultConditions = {}
+  let defaultOptions = {
+    limit: 10,
+    sort: 'username'
+  }
+
+  let conditions = getConditions(this.request.query, defaultConditions)
+  let query
+  try {
+    query = yield {
+      users: User.find(
+        conditions,
+        null,
+        getOptions(this.request.query, defaultOptions)
+      ),
+      count: User.count(conditions)
+    }
+  }
+  catch(e) {
+    this.status = 500
+    this.body = {
+      success: false,
+      message: `Unable to find users. ${e.message}`
+    }
+    yield next
+    return
+  }
+  let {users, count} = query
+  this.status = 200
+  this.body = {
+    message: 'Request was successful.',
+    count: count, //TODO
+    results: users.map(u => u.profile)
+  }
+  yield next
+}
+
+/**
+ * Update password for a user.
+ *
+ * @param {Function} next koa next middleware
+ */
+export function* updatePassword(next) {
+  function* changePassword(user) {
+    if (User.isStrongPassword(this.request.body.newPassword)) {
+      user.hashedPassword = yield encryptPassword(this.request.body.newPassword)
+      try {
+        yield user.save()
+        this.status = 200
+        this.body = {
+          success: true,
+          message: 'Successfully changed password'
+        }
+      }
+      catch(e) {
+        this.status = 500
+        this.body = {
+          success: false,
+          message: `Unable to change password. ${e.message}`
+        }
+      }
+    }
+    else {
+      this.status = 400
+      this.body = {
+        success: false,
+        message: 'You have provided wrong or a weak password.'
+      }
+    }
+  }
+
+  let actor = this.state.user
+  if (actor._id === this.params.id) {
+    let user = yield User.findById(this.params.id)
+    let validOldPassword = yield user.validatePassword(
+      this.request.body.oldPassword
+    )
+    if (validOldPassword) {
+      yield changePassword.call(this, user)
+    }
+    else {
+      this.status = 400
+      this.body = {
+        success: false,
+        message: 'Your password does not match'
+      }
+    }
+  }
+  else if (actor.role === 'admin') {
+    let user = yield User.findById(this.params.id)
+    yield changePassword.call(this, user)
+  }
+  else {
+    this.status = 403
+    this.body = {
+      success: false,
+      message: 'You are not permitted to change password for other users.'
+    }
+  }
+  yield next
+}

@@ -52,28 +52,140 @@ test('Users API tests', co.wrap(function* userAPITests(sub) {
         if (err) {
           t.error(err, err.message)
         }
-
         t.equal(
           res.body.user.username,
           username,
           'Username should match fetched user.'
         )
-
         t.ok(res.body.user.email, 'User has an email.')
-
         t.notOk(
           res.body.user.hasOwnProperty('hashedPassword'),
           'Hashed password should not be visible.'
         )
-
         t.notOk(
           res.body.user.hasOwnProperty('password'),
           'Password should not be visible.'
         )
-
         t.end()
       })
   }))
+
+  sub.test(
+    'Get default list of users',
+    co.wrap(function* getMultipleUserTest(t) {
+      request
+        .get(`/users/`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+          }
+          t.equal(res.body.count, 2, 'Count property should show 2 users.')
+          t.equal(res.body.results.length, 2, '2 users should be displayed.')
+          t.notOk(
+            res.body.results[1].hasOwnProperty('hashedPassword'),
+            'Hashed password should not be visible.'
+          )
+          t.notOk(
+            res.body.results[1].hasOwnProperty('password'),
+            'Password should not be visible.'
+          )
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'Get list of users queried by admin role',
+    co.wrap(function* getAdminListUserTest(t) {
+      request
+        .get('/users?role=admin')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+          }
+          t.equal(res.body.count, 1, 'Count property should show 1 user.')
+          t.equal(res.body.results.length, 1, '1 users should be displayed.')
+          t.notOk(
+            res.body.results[0].hasOwnProperty('hashedPassword'),
+            'Hashed password should not be visible.'
+          )
+          t.notOk(
+            res.body.results[0].hasOwnProperty('password'),
+            'Password should not be visible.'
+          )
+          t.equal(
+            res.body.results[0].username, 'michal', 'Correct user is shown.'
+          )
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'Get limited list of users',
+    co.wrap(function* getAdminListUserTest(t) {
+      request
+        .get('/users?limit=1')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+          }
+          t.equal(res.body.count, 2, 'Count property should show 2 users.')
+          t.equal(res.body.results.length, 1, '1 users should be displayed.')
+          t.notOk(
+            res.body.results[0].hasOwnProperty('hashedPassword'),
+            'Hashed password should not be visible.'
+          )
+          t.notOk(
+            res.body.results[0].hasOwnProperty('password'),
+            'Password should not be visible.'
+          )
+          t.equal(
+            res.body.results[0].username,
+            'michal',
+            'User is shown because of default ordering by username'
+          )
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'Get limited list of users ordered DESC',
+    co.wrap(function* getAdminListUserTest(t) {
+      request
+        .get('/users?limit=1&sort=-username')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+          }
+          t.equal(res.body.count, 2, 'Count property should show 2 users.')
+          t.equal(res.body.results.length, 1, '1 users should be displayed.')
+          t.notOk(
+            res.body.results[0].hasOwnProperty('hashedPassword'),
+            'Hashed password should not be visible.'
+          )
+          t.notOk(
+            res.body.results[0].hasOwnProperty('password'),
+            'Password should not be visible.'
+          )
+          t.equal(
+            res.body.results[0].username,
+            'sarka',
+            'User is shown because of default ordering is switched'
+          )
+          t.end()
+        })
+    })
+  )
 
   sub.test(
     'Admin should be able do add new user with correct data',
@@ -315,4 +427,164 @@ test('Users API tests', co.wrap(function* userAPITests(sub) {
         })
     })
   )
+
+  sub.test(
+    'User should be able to change his password',
+    co.wrap(function* userChangePassword(t) {
+      const token = yield getModeratorToken()
+      const user = yield User.findByUsername('sarka')
+      const passwords = {
+        oldPassword: 'moderator',
+        newPassword: 'HardToDigest123'
+      }
+      request.put(`/users/${user.id}/password`)
+        .set('authorization', `Bearer ${token}`)
+        .send(passwords)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+            t.end()
+          }
+          t.ok(res.body.success, 'Should indicate successful request')
+          t.ok(res.body.message, 'Message with indication should be visible')
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'User should not be able to change to a weak password',
+    co.wrap(function* userChangeWeakPassword(t) {
+      yield seed()
+      const token = yield getModeratorToken()
+      const user = yield User.findByUsername('sarka')
+      const passwords = {
+        oldPassword: 'moderator',
+        newPassword: 'weakone'
+      }
+      request.put(`/users/${user.id}/password`)
+        .set('authorization', `Bearer ${token}`)
+        .send(passwords)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+            t.end()
+          }
+          t.notOk(res.body.success, 'Should indicate successful request')
+          t.ok(res.body.message, 'Message with indication should be visible')
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'User should not be able to change his password if wrong old pwd is provided',
+    co.wrap(function* userChangeWeakPassword(t) {
+      yield seed()
+      const token = yield getModeratorToken()
+      const user = yield User.findByUsername('sarka')
+      const passwords = {
+        oldPassword: 'wrong',
+        newPassword: 'GoodEnough12'
+      }
+      request.put(`/users/${user.id}/password`)
+        .set('authorization', `Bearer ${token}`)
+        .send(passwords)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+            t.end()
+          }
+          t.notOk(res.body.success, 'Should indicate successful request')
+          t.ok(res.body.message, 'Message with indication should be visible')
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'Admin should be able to change others password without knowing old pwd',
+    co.wrap(function* userChangeWeakPassword(t) {
+      yield seed()
+      const token = yield getAdminToken()
+      const user = yield User.findByUsername('sarka')
+      const passwords = {
+        newPassword: 'GoodEnough12'
+      }
+      request.put(`/users/${user.id}/password`)
+        .set('authorization', `Bearer ${token}`)
+        .send(passwords)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+            t.end()
+          }
+          t.ok(res.body.success, 'Should indicate successful request')
+          t.ok(res.body.message, 'Message with indication should be visible')
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'Admin should not be able to change others password to a weak pwd',
+    co.wrap(function* userChangeWeakPassword(t) {
+      yield seed()
+      const token = yield getAdminToken()
+      const user = yield User.findByUsername('sarka')
+      const passwords = {
+        newPassword: 'weakagain'
+      }
+      request.put(`/users/${user.id}/password`)
+        .set('authorization', `Bearer ${token}`)
+        .send(passwords)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+            t.end()
+          }
+          t.notOk(res.body.success, 'Should indicate successful request')
+          t.ok(res.body.message, 'Message with indication should be visible')
+          t.end()
+        })
+    })
+  )
+
+  sub.test(
+    'User is not able to change others password.',
+    co.wrap(function* userChangeWeakPassword(t) {
+      yield seed()
+      const token = yield getModeratorToken()
+      const user = yield User.findByUsername('michal')
+      const passwords = {
+        newPassword: 'DoesntMatter'
+      }
+      request.put(`/users/${user.id}/password`)
+        .set('authorization', `Bearer ${token}`)
+        .send(passwords)
+        .expect(403)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .end((err, res) => {
+          if (err) {
+            t.error(err, err.message)
+            t.end()
+          }
+          t.notOk(res.body.success, 'Should indicate successful request')
+          t.ok(res.body.message, 'Message with indication should be visible')
+          t.end()
+        })
+    })
+  )
+
+  sub.end()
 }))

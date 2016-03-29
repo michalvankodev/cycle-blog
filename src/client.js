@@ -2,6 +2,7 @@ let Cycle = require('@cycle/core')
 let {makeDOMDriver} = require('@cycle/dom')
 let {makeHTTPDriver} = require('@cycle/http')
 let {App} = require('./client/app')
+import {createHistory} from 'history'
 import {makeHistoryDriver, filterLinks} from '@cycle/history'
 
 function clientSideApp(responses) {
@@ -9,16 +10,11 @@ function clientSideApp(responses) {
   return requests
 }
 
-
+const history = createHistory()
 let drivers = {
   DOM: makeDOMDriver('#app'),
   HTTP: makeHTTPDriver(),
-  History: makeHistoryDriver({
-    hash: false, // default, true if your browser doesn't support History API
-    queries: true, // default, toggle QuerySupport
-    basename: '' // default, sets up BasenameSupport
-    // all other history Options
-  })
+  History: makeHistoryDriver(history)
 }
 
 Cycle.run(clientSideApp, drivers)

@@ -1,20 +1,21 @@
 import {renderHeader} from './header/header'
 import {renderFooter} from './footer/footer'
 import {div} from '@cycle/dom'
-import articles from './pages/articles'
+import router from './router/router'
+import {Observable} from 'rx'
 
 export function App(sources) {
   // routing
   const url$ = sources.DOM.select('a').events('click')
     .map(e => e.target.href)//.filter(filterLinks)
 
-  const arts = articles(sources)
+  const mainRouter = router(sources)
 
-  const vtree$ = arts.DOM.map(routerVTree =>
+  const vtree$ = mainRouter.DOM.map(routerVTree =>
     div('#app-container', [renderHeader(), routerVTree, renderFooter()])
   )
 
-  const http$ = arts.HTTP
+  const http$ = Observable.just({})
 
   // http$.subscribe((request) => {
   //   console.log(request)
