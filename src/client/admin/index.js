@@ -9,7 +9,7 @@ export function AdminIndex(sources) {
 }
 
 const routes = {
-  '/': AdminIndex,
+  '*': AdminIndex,
   '/users': Users
 }
 
@@ -31,9 +31,9 @@ export default function Admin(sources) {
   const {router} = sources
   const match$ = router.define(routes)
   const children$ = match$.map(
-    ({path, value}) => value({...sources, router: router.path(path)})
+    ({path, value}) => value(sources)
   )
-  const vtree$ = children$.map(ch => ch.DOM).map(view)
+  const vtree$ = children$.flatMapLatest(ch => ch.DOM).map(view)
   return {
     DOM: vtree$
   }

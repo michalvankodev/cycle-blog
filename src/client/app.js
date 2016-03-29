@@ -27,7 +27,7 @@ export function App(sources) {
   const children$ = mainRouter$.map(
     ({path, value}) => value({...sources, router: sources.router.path(path)})
   )
-  const vtree$ = children$.map(x => x.DOM).map(view)
+  const vtree$ = children$.flatMapLatest(x => x.DOM).map(view)
   const http$ = Observable.just({})
 
   // http$.subscribe((request) => {

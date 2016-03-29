@@ -7,12 +7,15 @@ import {serveClient} from './serve-client'
 import route from 'koa-route'
 import serveBundle from './serve-bundle'
 import unless from 'koa-unless'
+import favicon from 'koa-favicon'
 
 import apiApp from './api'
 
 let app = koa()
 
 app.use(logger())
+
+app.use(favicon())
 
 // Mount API to the server
 app.use(mount('/api', apiApp))
