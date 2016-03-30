@@ -7,7 +7,7 @@ import Articles from './pages/articles'
 import Admin from './admin'
 
 const routes = {
-  '/': Home,
+  '*': Home,
   '/home': Home,
   '/articles': Articles,
   '/admin': Admin
@@ -28,10 +28,10 @@ export function App(sources) {
     ({path, value}) => value({...sources, router: sources.router.path(path)})
   )
   const vtree$ = children$.flatMapLatest(x => x.DOM).map(view)
-  const http$ = Observable.just({})
+  const http$ = children$.flatMapLatest(x => x.HTTP || Observable.empty())
 
   // http$.subscribe((request) => {
-  //   console.log(request)
+  //   console.log('app:', request)
   // })
 
   return {

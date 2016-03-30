@@ -3,6 +3,7 @@ import {div, section, aside, h4, ul, li, a} from '@cycle/dom'
 import {partial} from 'ramda'
 import Users from './users'
 import Posts from './posts'
+import isolate from '@cycle/isolate'
 
 export function AdminIndex(sources) {
   return {
@@ -46,10 +47,11 @@ export default function Admin(sources) {
   const children$ = match$.map(
     ({path, value}) => value({...sources, router: sources.router.path(path)})
   )
-  //partial application on view sidebar
   const createView = partial(view, [router.createHref])
   const vtree$ = children$.flatMapLatest(ch => ch.DOM).map(createView)
+  const http$ = children$.flatMapLatest(x => x.HTTP || Observable.empty())
   return {
-    DOM: vtree$
+    DOM: vtree$,
+    HTTP: http$
   }
 }

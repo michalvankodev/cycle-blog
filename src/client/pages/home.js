@@ -1,7 +1,8 @@
-import {h} from '@cycle/dom';
+import {div} from '@cycle/dom'
+import {Observable} from 'rx'
 
 export default function Home(sources) {
   return {
-    DOM: h('div',' HOME PAGE YEAY')
-  };
+    DOM: Observable.just(div('HOME PAGE YEAY'))
+  }
 }

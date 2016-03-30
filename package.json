@@ -42,6 +42,7 @@
     "@cycle/dom": "^9.2.2",
     "@cycle/history": "*",
     "@cycle/http": "^8.2.2",
+    "@cycle/isolate": "^1.2.0",
     "bcrypt": "^0.8.5",
     "cyclic-router": "^1.0.0",
     "dejavu-fonts-ttf": "^2.35.5",
