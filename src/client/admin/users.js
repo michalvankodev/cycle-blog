@@ -41,15 +41,17 @@ export default function Users(sources) {
   const response$ = HTTP
     .filter(res$ => res$.request.category === 'users')
     .switch()
+    .share()
   const state$ = response$
     .map(r => r.body)
     .map(model)
     .catch(() => errorState)
     .startWith(startState)
-  const view$ = state$.map(view).share()
+    .share()
+  const view$ = state$.map(view)
 
   return {
     DOM: view$,
-    HTTP: request$.do(x=>console.log('users fetch', x)).share()
+    HTTP: request$.do(x=>console.log('users fetch', x))
   }
 }

@@ -41,16 +41,19 @@ function view(createHref, children) {
 }
 
 export default function Admin(sources) {
+  console.log('admin component')
   const {router} = sources
   const match$ = router.define(routes).do(x => console.log('tellme', x))
   const children$ = match$.map(
     ({path, value}) => value({...sources, router: sources.router.path(path)})
   ).share()
   const createView = partial(view, [router.createHref])
-  const vtree$ = children$.map(ch => ch.DOM).switch().map(createView)
-  const http$ = children$.map(x => x.HTTP)
-    .do(x=>console.log('allhttp fetch', x))
-    .filter(x => !!x).mergeAll()
+  const vtree$ = children$.pluck('DOM').switch().map(createView).share()
+  const http$ = children$.pluck('HTTP')
+  .filter(x => !!x)
+  .switch()
+
+  // http$.subscribe(x => console.log(x))
   return {
     DOM: vtree$,
     HTTP: http$.do(x=>console.log('admin fetch', x))
