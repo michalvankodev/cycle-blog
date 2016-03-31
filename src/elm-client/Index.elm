@@ -4,6 +4,8 @@ import Html exposing (..)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 
+import BlogHeader
+
 
 -- MODEL
 
@@ -24,6 +26,6 @@ update action model =
 
 view : Signal.Address Action -> Model -> Html
 view adress model =
-  div []
-    [ h1 [] [ text "Michal's Blog"]
-    ]
+    div []
+      [ BlogHeader.view
+      ]

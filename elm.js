@@ -10319,6 +10319,102 @@ Elm.StartApp.Simple.make = function (_elm) {
    var Config = F3(function (a,b,c) {    return {model: a,view: b,update: c};});
    return _elm.StartApp.Simple.values = {_op: _op,Config: Config,start: start};
 };
+Elm.ParseInt = Elm.ParseInt || {};
+Elm.ParseInt.make = function (_elm) {
+   "use strict";
+   _elm.ParseInt = _elm.ParseInt || {};
+   if (_elm.ParseInt.values) return _elm.ParseInt.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Char = Elm.Char.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var charFromInt = function (i) {
+      return _U.cmp(i,10) < 0 ? $Char.fromCode(i + $Char.toCode(_U.chr("0"))) : _U.cmp(i,
+      36) < 0 ? $Char.fromCode(i - 10 + $Char.toCode(_U.chr("A"))) : _U.crash("ParseInt",
+      {start: {line: 141,column: 5},end: {line: 141,column: 16}})($Basics.toString(i));
+   };
+   var toRadix$ = F2(function (radix,i) {
+      return _U.cmp(i,radix) < 0 ? $String.fromChar(charFromInt(i)) : A2($Basics._op["++"],
+      A2(toRadix$,radix,i / radix | 0),
+      $String.fromChar(charFromInt(A2($Basics._op["%"],i,radix))));
+   });
+   var isBetween = F3(function (lower,upper,c) {    var ci = $Char.toCode(c);return _U.cmp($Char.toCode(lower),ci) < 1 && _U.cmp(ci,$Char.toCode(upper)) < 1;});
+   var charOffset = F2(function (basis,c) {    return $Char.toCode(c) - $Char.toCode(basis);});
+   var InvalidRadix = function (a) {    return {ctor: "InvalidRadix",_0: a};};
+   var toRadix = F2(function (radix,i) {
+      return _U.cmp(2,radix) < 1 && _U.cmp(radix,36) < 1 ? _U.cmp(i,0) < 0 ? $Result.Ok(A2($Basics._op["++"],
+      "-",
+      A2(toRadix$,radix,0 - i))) : $Result.Ok(A2(toRadix$,radix,i)) : $Result.Err(InvalidRadix(radix));
+   });
+   var OutOfRange = function (a) {    return {ctor: "OutOfRange",_0: a};};
+   var InvalidChar = function (a) {    return {ctor: "InvalidChar",_0: a};};
+   var intFromChar = F2(function (radix,c) {
+      var validInt = function (i) {    return _U.cmp(i,radix) < 0 ? $Result.Ok(i) : $Result.Err(OutOfRange(c));};
+      var toInt = A3(isBetween,_U.chr("0"),_U.chr("9"),c) ? $Result.Ok(A2(charOffset,_U.chr("0"),c)) : A3(isBetween,
+      _U.chr("a"),
+      _U.chr("z"),
+      c) ? $Result.Ok(10 + A2(charOffset,_U.chr("a"),c)) : A3(isBetween,_U.chr("A"),_U.chr("Z"),c) ? $Result.Ok(10 + A2(charOffset,
+      _U.chr("A"),
+      c)) : $Result.Err(InvalidChar(c));
+      return A2($Result.andThen,toInt,validInt);
+   });
+   var parseIntR = F2(function (radix,rstring) {
+      var _p0 = $String.uncons(rstring);
+      if (_p0.ctor === "Nothing") {
+            return $Result.Ok(0);
+         } else {
+            return A2($Result.andThen,
+            A2(intFromChar,radix,_p0._0._0),
+            function (ci) {
+               return A2($Result.andThen,A2(parseIntR,radix,_p0._0._1),function (ri) {    return $Result.Ok(ci + ri * radix);});
+            });
+         }
+   });
+   var parseIntRadix = F2(function (radix,string) {
+      return _U.cmp(2,radix) < 1 && _U.cmp(radix,36) < 1 ? A2(parseIntR,radix,$String.reverse(string)) : $Result.Err(InvalidRadix(radix));
+   });
+   var parseInt = parseIntRadix(10);
+   var parseIntOct = parseIntRadix(8);
+   var parseIntHex = parseIntRadix(16);
+   return _elm.ParseInt.values = {_op: _op
+                                 ,parseInt: parseInt
+                                 ,parseIntOct: parseIntOct
+                                 ,parseIntHex: parseIntHex
+                                 ,parseIntRadix: parseIntRadix
+                                 ,toRadix: toRadix
+                                 ,toRadix$: toRadix$
+                                 ,InvalidChar: InvalidChar
+                                 ,OutOfRange: OutOfRange
+                                 ,InvalidRadix: InvalidRadix};
+};
+Elm.BlogHeader = Elm.BlogHeader || {};
+Elm.BlogHeader.make = function (_elm) {
+   "use strict";
+   _elm.BlogHeader = _elm.BlogHeader || {};
+   if (_elm.BlogHeader.values) return _elm.BlogHeader.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $ParseInt = Elm.ParseInt.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var fourTwenty = A3($String.pad,32,_U.chr("0"),A2($ParseInt.toRadix$,2,420));
+   var view = A2($Html.header,
+   _U.list([]),
+   _U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Michal\'s Blog")])),A2($Html.span,_U.list([]),_U.list([$Html.text(fourTwenty)]))]));
+   return _elm.BlogHeader.values = {_op: _op,view: view,fourTwenty: fourTwenty};
+};
 Elm.Index = Elm.Index || {};
 Elm.Index.make = function (_elm) {
    "use strict";
@@ -10326,6 +10422,7 @@ Elm.Index.make = function (_elm) {
    if (_elm.Index.values) return _elm.Index.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
+   $BlogHeader = Elm.BlogHeader.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Html = Elm.Html.make(_elm),
    $List = Elm.List.make(_elm),
@@ -10333,7 +10430,7 @@ Elm.Index.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
    var _op = {};
-   var view = F2(function (adress,model) {    return A2($Html.div,_U.list([]),_U.list([A2($Html.h1,_U.list([]),_U.list([$Html.text("Michal\'s Blog")]))]));});
+   var view = F2(function (adress,model) {    return A2($Html.div,_U.list([]),_U.list([$BlogHeader.view]));});
    var update = F2(function (action,model) {    return model;});
    var Nothing = {ctor: "Nothing"};
    var model = 0;
