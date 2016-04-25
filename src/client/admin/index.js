@@ -1,4 +1,4 @@
-import {Observable} from 'rx'
+import xs from 'xstream'
 import {div, section, aside, h4, ul, li, a} from '@cycle/dom'
 import {partial} from 'ramda'
 import Users from './users'
@@ -6,7 +6,7 @@ import Posts from './posts'
 
 export function AdminIndex(sources) {
   return {
-    DOM: Observable.just(div('Welcome peasent'))
+    DOM: xs.of(div('Welcome peasent'))
   }
 }
 
@@ -43,19 +43,18 @@ function view(createHref, children) {
 export default function Admin(sources) {
   console.log('admin component')
   const {router} = sources
-  const match$ = router.define(routes).do(x => console.log('tellme', x))
+  const match$ = router.define(routes).debug()
   const children$ = match$.map(
     ({path, value}) => value({...sources, router: sources.router.path(path)})
-  ).share()
+  )
   const createView = partial(view, [router.createHref])
-  const vtree$ = children$.pluck('DOM').switch().map(createView).share()
-  const http$ = children$.pluck('HTTP')
-  .filter(x => !!x)
-  .switch()
-
+  const vtree$ = children$.map(x => x.DOM).flatten().map(createView)
+  const http$ = children$.map(x => x.HTTP || xs.empty())
+    .flatten().debug()
+  console.log(vtree$)
   // http$.subscribe(x => console.log(x))
   return {
     DOM: vtree$,
-    HTTP: http$.do(x=>console.log('admin fetch', x))
+    HTTP: http$
   }
 }

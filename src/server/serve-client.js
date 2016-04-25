@@ -1,4 +1,4 @@
-import Cycle from '@cycle/core'
+import Cycle from '@cycle/xstream-run'
 import {Observable} from 'rx'
 import {makeHTMLDriver} from '@cycle/dom'
 import {createServerHistory, makeHistoryDriver} from '@cycle/history'

@@ -1,4 +1,4 @@
-import {Observable} from 'rx'
+import xs from 'xstream'
 import {div, ul, li, a} from '@cycle/dom'
 
 function model(response) {
@@ -32,26 +32,24 @@ const startState = {
 
 export default function Users(sources) {
   console.log('run Users component')
-  const request$ = Observable.just({
+  const request$ = xs.of({
     url: '/api/users',
     category: 'users'
-  })
+  }).debug()
 
   const {HTTP} = sources
   const response$ = HTTP
     .filter(res$ => res$.request.category === 'users')
-    .switch()
-    .share()
+    .flatten()
   const state$ = response$
     .map(r => r.body)
     .map(model)
     .catch(() => errorState)
     .startWith(startState)
-    .share()
   const view$ = state$.map(view)
 
   return {
     DOM: view$,
-    HTTP: request$.do(x=>console.log('users fetch', x))
+    HTTP: request$
   }
 }

@@ -1,4 +1,4 @@
-import {Observable} from 'rx'
+import xs from 'xstream'
 import {renderHeader} from './header/header'
 import {renderFooter} from './footer/footer'
 import {div} from '@cycle/dom'
@@ -27,9 +27,9 @@ export function App(sources) {
   const children$ = mainRouter$.map(
     ({path, value}) => value({...sources, router: sources.router.path(path)})
   )
-  const vtree$ = children$.flatMapLatest(x => x.DOM).map(view)
-  const http$ = children$.flatMapLatest(x => x.HTTP || Observable.empty())
-
+  const vtree$ = children$.map(x => x.DOM).flatten().map(view)
+  const http$ = children$.map(x => x.HTTP || xs.empty()).flatten()
+  vtree$.subscribe = vtree$.prototype.addListener
   // http$.subscribe((request) => {
   //   console.log('app:', request)
   // })

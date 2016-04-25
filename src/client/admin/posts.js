@@ -1,9 +1,8 @@
-import {Observable} from 'rx'
+import xs from 'xstream'
 import {div} from '@cycle/dom'
 
 export default function Posts() {
-
   return {
-    DOM: Observable.just(div('it WOKRS !!'))
+    DOM: xs.of(div('it WOKRS !!'))
   }
 }
