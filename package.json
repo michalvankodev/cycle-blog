@@ -45,7 +45,6 @@
     "@cycle/isolate": "^1.2.0",
     "@cycle/xstream-run": "^1.0.0",
     "bcrypt": "^0.8.6",
-    "cycle-snabbdom": "^1.2.1",
     "cyclic-router": "^1.0.0",
     "dejavu-fonts-ttf": "^2.35.5",
     "history": "^2.1.0",
