@@ -21,7 +21,7 @@ function view(children) {
   ])
 }
 
-export function App(sources) {
+export default function App(sources) {
   // routing
   const mainRouter$ = sources.router.define(routes)
   const children$ = mainRouter$.map(

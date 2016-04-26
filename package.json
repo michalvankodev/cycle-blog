@@ -39,7 +39,7 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
-    "@cycle/dom": "^10.0.0-rc7",
+    "@cycle/dom": "^10.0.0-rc8",
     "@cycle/history": "*",
     "@cycle/http": "^9.0.0-rc2",
     "@cycle/isolate": "^1.2.0",

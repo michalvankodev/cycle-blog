@@ -4,7 +4,7 @@ import {makeHTMLDriver} from '@cycle/dom'
 import {createServerHistory, makeHistoryDriver} from '@cycle/history'
 import {makeHTTPDriver} from '@cycle/http'
 import {makeRouterDriver} from 'cyclic-router'
-import {App} from '../client/app'
+import App from '../client/app'
 import {wrapVTreeWithHTMLBoilerplate, prependDoctype} from './html-boilerplate'
 import toHTML from 'snabbdom-to-html'
 
@@ -13,7 +13,7 @@ function wrapAppResultWithBoilerplate(appFn) {
     let requests = appFn(ext)
     let vtree$ = requests.DOM
     console.log('chyba sa stane tu 1')
-    let wrappedVTree$ = vtree$.map(wrapVTreeWithHTMLBoilerplate)
+    let wrappedVTree$ = vtree$.map(wrapVTreeWithHTMLBoilerplate).debug(e => console.log('vtreeeeeeeeee', e))
     console.log('chyba sa stane tu 2')
     return {
       DOM: wrappedVTree$,
@@ -39,10 +39,13 @@ export function* serveClient(next) {
   console.log('sources' ,sources, sinks)
 
   let html$ = sources.DOM.elements
-    .do(e => { console.log('before html') ; console.log(e)})
+  console.log('before transformation', html$)
+  
+  html$ = html$
+    //.do(e => { console.log('before html') ; console.log(e)})
     //.map(toHTML)
     .map(prependDoctype)
-    .do(e => console.log(e))
+    //.do(e => console.log(e))
 
   // this.body = yield new Promise(resolve => 
   //   html$.take(1).t(x => {
@@ -54,19 +57,19 @@ export function* serveClient(next) {
   // I need to return promise when I subscribe to HTML stream and then trigger run so it actally happens
   console.log('chyba sa stane tu 5')
   try {
-  this.body = yield new Promise(resolve => {
-    html$.subscribe(html => {
-      console.log('HTML::::', html)
-      resolve(html)
-    }, error => {console.log(e.message, e)})
-    console.log('HTML$::::', html$)
+    this.body = yield new Promise(resolve => {
+      html$.addListener(html => {
+        console.log('HTML::::', html)
+        resolve(html)
+      }, error => {console.log(error.message, error)})
+      console.log('HTML$::::', html$)
 
-    let dispose = run()
-    console.log('dipose', dispose)
-  })
-} catch(e) {
-  console.log(e.message, e)
-}
+      let dispose = run()
+      console.log('dipose', dispose)
+    })
+  } catch(e) {
+    console.log(e.message, e)
+  }
   console.log('chyba sa stane tu 6')
   
 
