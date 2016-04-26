@@ -1,13 +1,13 @@
 import {h} from '@cycle/dom'
-import {Observable} from 'rx'
+import xs from 'xstream'
 
 export default function Articles({HTTP}) {
-  const request$ = Observable.just('http://localhost:8000/api/articles')
+  const request$ = xs.of('http://localhost:8000/api/articles')
 
   const testValue$ = HTTP.filter(res$ => res$.request.url === 'http://localhost:8000/api/articles')
-    .mergeAll()
+    .flatten()
     .map(res => res.text)
-    .catch(() => 'error')
+    .replaceError(() => 'error')
     .startWith('loading ..')
 
   const vtree$ = testValue$.map(text => h('div', text))

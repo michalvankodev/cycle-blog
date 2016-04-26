@@ -1,8 +1,8 @@
 import {div} from '@cycle/dom'
-import {Observable} from 'rx'
+import xs from 'xstream'
 
 export default function Home(sources) {
   return {
-    DOM: Observable.just(div('HOME PAGE YEAY'))
+    DOM: xs.of(div('HOME PAGE YEAY'))
   }
 }
