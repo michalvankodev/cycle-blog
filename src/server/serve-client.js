@@ -8,21 +8,51 @@ import App from '../client/app'
 import {wrapVTreeWithHTMLBoilerplate, prependDoctype} from './html-boilerplate'
 import toHTML from 'snabbdom-to-html'
 
-function wrapAppResultWithBoilerplate(appFn) {
-  return function wrappedAppFn(ext) {
-    let requests = appFn(ext)
-    let vtree$ = requests.DOM
-    let wrappedVTree$ = vtree$.map(wrapVTreeWithHTMLBoilerplate).debug()
-    let HTTP$ = requests.HTTP.debug()
+export function* serveClient(next) {
 
-    return {
-      DOM: wrappedVTree$,
-      HTTP: HTTP$
+  let host = this.request.host
+  /**
+  * Adapts the url if it should be executed on the same server
+  * by appending host and port pointing to this koa app
+  * @param  {string} url
+  * @return {string} url with added information about host
+  */
+  function adaptUrl(url) {
+    if (url.startsWith('/')) {
+      return host + url
+    }
+    return url
+  }
+  /**
+   * Adapt all request that should be executed on this server.
+   *
+   * Node will try to request for localhost with default port of 80
+   * no matter of the port of running koa instance.
+   * We need to adapt request that are able to be retrieved from this koa app.
+   * We can easily do that by just changing the url of the requests.
+   * All other requests to different hosts should stay the same.
+   * @param  {@cycle/http.request} request Request object accepted by HTTP sink
+   * @return {@cycle/http.request} The same object or object with adapted url
+   *  if should the request be processed by this server
+   */
+  function adaptLocalRequests(request) {
+    return {...request, url: adaptUrl(request.url)}
+  }
+
+  function wrapAppResultWithBoilerplate(appFn) {
+    return function wrappedAppFn(ext) {
+      let requests = appFn(ext)
+      let vtree$ = requests.DOM
+      let wrappedVTree$ = vtree$.map(wrapVTreeWithHTMLBoilerplate)
+      let HTTP$ = requests.HTTP.map(adaptLocalRequests).debug()
+
+      return {
+        DOM: wrappedVTree$,
+        HTTP: HTTP$
+      }
     }
   }
-}
 
-export function* serveClient(next) {
   let wrappedAppFn = wrapAppResultWithBoilerplate(App)
 
   const history = createServerHistory()

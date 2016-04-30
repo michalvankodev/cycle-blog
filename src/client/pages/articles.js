@@ -2,10 +2,8 @@ import {h} from '@cycle/dom'
 import xs from 'xstream'
 
 export default function Articles({HTTP}) {
-  let url = process.title !== 'a' ? 'http://localhost:8000/api/articles' : 'api/articles'
-
   const request$ = xs.of({
-    url,
+    url: '/api/articles',
     category: 'articles'
   }).remember().debug()
 
