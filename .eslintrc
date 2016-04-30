@@ -1,5 +1,5 @@
 {
-  "extends": "eslint-config-cycle",
+  "extends": "eslint:recommended",
   "parser": "babel-eslint",
   "env": {
     "node": true,
@@ -11,12 +11,12 @@
       "sourceType": "module"
   },
   "rules" : {
-    "no-console": 1,
+    "no-console": 2,
     "no-debugger": 2,
     "quotes": [1, "single", "avoid-escape"],
     "comma-dangle": [2, "never"],
     "new-cap": [0],
     "brace-style": [2, "stroustrup", { "allowSingleLine": true }],
-    "cycle/brace-style": 0
+    "semi": [1, "never"]
   }
 }

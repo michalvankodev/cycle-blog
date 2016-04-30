@@ -2,12 +2,17 @@ import {h} from '@cycle/dom'
 import xs from 'xstream'
 
 export default function Articles({HTTP}) {
-  const request$ = xs.of('http://localhost:8000/api/articles')
+  let url = process.title !== 'a' ? 'http://localhost:8000/api/articles' : 'api/articles'
 
-  const testValue$ = HTTP.filter(res$ => res$.request.url === 'http://localhost:8000/api/articles')
+  const request$ = xs.of({
+    url,
+    category: 'articles'
+  }).remember().debug()
+
+  const testValue$ = HTTP
+    .select('articles')
     .flatten()
     .map(res => res.text)
-    .replaceError(() => 'error')
     .startWith('loading ..')
 
   const vtree$ = testValue$.map(text => h('div', text))

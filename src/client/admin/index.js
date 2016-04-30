@@ -50,7 +50,7 @@ export default function Admin(sources) {
   const match$ = router.define(routes)
   const children$ = match$.map(
     ({path, value}) => value({...sources, router: sources.router.path(path)})
-  )
+  ).remember()
   const createView = partial(view, [::router.createHref])
   const vtree$ = children$.map(x => x.DOM).flatten().map(createView)
   const http$ = children$.map(x => x.HTTP || xs.empty())

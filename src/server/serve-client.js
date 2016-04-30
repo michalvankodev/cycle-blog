@@ -38,20 +38,12 @@ export function* serveClient(next) {
   const respond = new Promise((resolve, reject) => {
     html$.addListener({
       next: html => resolve(html),
-      error: error => console.log(error.message, error),
-      complete: () => console.log('FINAL HTML STREAM COMPLETED'),
+      error: error => console.log(error.message, error), // TODO RENDER ERROR PAGE
+      complete: () => {}
     })
-    sources.router.history$.addListener({
-      next: event => {
-        console.log('children next', event)
-        sources.router.history$.shamefullySendComplete()
-      },
-      error: error => console.log(error.message, error),
-      complete: () => console.log('CHILDREN STREAM COMPLETED'),
-    })
-
     run()
     history.push(history.createLocation(this.request.url))
+    history.complete()
   })
   // I need to return promise when I subscribe to HTML stream and then trigger run so it actally happens
   try {

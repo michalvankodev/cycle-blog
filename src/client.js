@@ -20,7 +20,7 @@ let drivers = {
   router: makeRouterDriver(history, {capture: true})
 }
 
-Cycle.run(Admin, drivers)
+Cycle.run(App, drivers)
 
 if (module.hot) {
   module.hot.accept()

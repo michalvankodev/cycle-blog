@@ -16,9 +16,13 @@ function view({users = [], errorMessage}) {
 }
 
 const errorState = {
-  total: 0,
-  users: [],
-  errorMessage: 'An error occured'
+  body: {
+    response: {
+      total: 0,
+      users: [],
+      errorMessage: 'An error occured'
+    }
+  }
 }
 
 const startState = {
@@ -31,16 +35,16 @@ export default function Users(sources) {
   const request$ = xs.of({
     url: '/api/users',
     category: 'users'
-  }).debug()
+  }).remember()
 
   const {HTTP} = sources
   const response$ = HTTP
     .select('users')
     .flatten()
+    .replaceError(() => response$.startWith(errorState))
   const state$ = response$
     .map(r => r.body)
     .map(model)
-    .replaceError(() => errorState)
     .startWith(startState)
   const view$ = state$.map(view)
 

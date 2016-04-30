@@ -30,7 +30,6 @@
     "browserify": "^13.0.0",
     "browserify-hmr": "^0.3.1",
     "eslint": "^2.8.0",
-    "eslint-config-cycle": "^3.2.0",
     "faucet": "0.0.1",
     "less": "^2.6.1",
     "nodemon": "^1.9.1",
@@ -40,7 +39,7 @@
   },
   "dependencies": {
     "@cycle/dom": "^10.0.0-rc8",
-    "@cycle/history": "^3.0.4",
+    "@cycle/history": "git@github.com:michalvankodev/history.git#80adb1157feaec2775f8dc6547f009df6ed55467",
     "@cycle/http": "^9.0.0-rc2",
     "@cycle/isolate": "^1.2.0",
     "@cycle/xstream-run": "^1.0.1",
