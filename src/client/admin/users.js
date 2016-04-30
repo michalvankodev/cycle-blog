@@ -9,13 +9,10 @@ function model(response) {
 }
 
 function view({users = [], errorMessage}) {
-  console.log('generating view', arguments)
   if (errorMessage) {
     return div(errorMessage)
   }
-  return ul('.users-list', [
-    users.map(u => li(u.username))
-  ])
+  return ul('.users-list', users.map(u => li(u.username)))
 }
 
 const errorState = {
@@ -31,7 +28,6 @@ const startState = {
 }
 
 export default function Users(sources) {
-  console.log('run Users component')
   const request$ = xs.of({
     url: '/api/users',
     category: 'users'
@@ -39,12 +35,12 @@ export default function Users(sources) {
 
   const {HTTP} = sources
   const response$ = HTTP
-    .filter(res$ => res$.request.category === 'users')
+    .select('users')
     .flatten()
   const state$ = response$
     .map(r => r.body)
     .map(model)
-    .catch(() => errorState)
+    .replaceError(() => errorState)
     .startWith(startState)
   const view$ = state$.map(view)
 

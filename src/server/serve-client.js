@@ -11,13 +11,13 @@ import toHTML from 'snabbdom-to-html'
 function wrapAppResultWithBoilerplate(appFn) {
   return function wrappedAppFn(ext) {
     let requests = appFn(ext)
-    let vtree$ = requests.DOM.take(1)
-    console.log('chyba sa stane tu 1')
-    let wrappedVTree$ = vtree$.map(wrapVTreeWithHTMLBoilerplate)
-    console.log('chyba sa stane tu 2')
+    let vtree$ = requests.DOM
+    let wrappedVTree$ = vtree$.map(wrapVTreeWithHTMLBoilerplate).debug()
+    let HTTP$ = requests.HTTP.debug()
+
     return {
       DOM: wrappedVTree$,
-      HTTP: requests.HTTP
+      HTTP: HTTP$
     }
   }
 }
@@ -32,20 +32,26 @@ export function* serveClient(next) {
     HTTP: makeHTTPDriver()
   })
 
-  console.log('chyba sa stane tu 4')
-  console.log('URL IS ', this.request.url)
-  console.log('sources' ,sources, sinks)
-
   let html$ = sources.DOM.elements
     .map(prependDoctype)
 
   const respond = new Promise((resolve, reject) => {
-    let dispose = run()
-    history.push(history.createLocation(this.request.url))
-    html$.take(1).addListener({
+    html$.addListener({
       next: html => resolve(html),
-      error: error => console.log(error.message, error)
+      error: error => console.log(error.message, error),
+      complete: () => console.log('FINAL HTML STREAM COMPLETED'),
     })
+    sources.router.history$.addListener({
+      next: event => {
+        console.log('children next', event)
+        sources.router.history$.shamefullySendComplete()
+      },
+      error: error => console.log(error.message, error),
+      complete: () => console.log('CHILDREN STREAM COMPLETED'),
+    })
+
+    run()
+    history.push(history.createLocation(this.request.url))
   })
   // I need to return promise when I subscribe to HTML stream and then trigger run so it actally happens
   try {
@@ -53,6 +59,5 @@ export function* serveClient(next) {
   } catch (e) {
     console.log(e, e.message, e.stack)
   }
-  console.log('chyba sa stane tu 6')
   yield next
 }

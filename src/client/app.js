@@ -26,13 +26,18 @@ export default function App(sources) {
   const mainRouter$ = sources.router.define(routes)
   const children$ = mainRouter$.map(
     ({path, value}) => value({...sources, router: sources.router.path(path)})
-  )
-  const vtree$ = children$.map(x => x.DOM).flatten().map(view).debug()
-  console.log('App vtree$', vtree$)
+  ).debug(e => console.log('children$ ', e))
+  const vtree$ = children$.map(x => x.DOM).flatten().map(view)
   const http$ = children$.map(x => x.HTTP || xs.empty()).flatten()
-  // http$.subscribe((request) => {
-  //   console.log('app:', request)
-  // })
+
+  children$.addListener({
+    next: event => {
+      console.log('children next', event)
+      //children$.shamefullySendComplete()
+    },
+    error: error => console.log(error.message, error),
+    complete: () => console.log('CHILDREN STREAM COMPLETED'),
+  })
 
   return {
     DOM: vtree$,

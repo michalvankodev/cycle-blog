@@ -13,7 +13,7 @@ export function wrapVTreeWithHTMLBoilerplate(vtree) {
     ]),
     body([
       div('#app', [vtree]),
-      script({src: `/static/bundle.js`})
+      script({props: {src: '/static/bundle.js'}})
     ])
   ])
 }

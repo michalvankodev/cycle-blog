@@ -18,7 +18,12 @@ const routes = {
 
 function sidebarItem(createHref, {path, name}) {
   return li('.admin-nav-item', [
-    a({href: createHref(path)}, name)
+    a(
+      {props: {
+        href: createHref(path)
+      }},
+      name
+    )
   ])
 }
 
@@ -41,18 +46,15 @@ function view(createHref, children) {
 }
 
 export default function Admin(sources) {
-  console.log('admin component')
   const {router} = sources
-  const match$ = router.define(routes).debug()
+  const match$ = router.define(routes)
   const children$ = match$.map(
     ({path, value}) => value({...sources, router: sources.router.path(path)})
   )
-  const createView = partial(view, [router.createHref])
+  const createView = partial(view, [::router.createHref])
   const vtree$ = children$.map(x => x.DOM).flatten().map(createView)
   const http$ = children$.map(x => x.HTTP || xs.empty())
-    .flatten().debug()
-  console.log(vtree$)
-  // http$.subscribe(x => console.log(x))
+    .flatten()
   return {
     DOM: vtree$,
     HTTP: http$

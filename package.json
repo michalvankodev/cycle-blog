@@ -7,7 +7,7 @@
     "lint": "eslint src/",
     "test-server": "NODE_ENV=test babel-tape-runner 'src/server/**/*.spec.js'",
     "babel-node": "NODE_ENV=development babel-node 'src/server/index.js'",
-    "dev-server": "nodemon --watch src/server --exec npm run babel-node",
+    "dev-server": "nodemon --watch src/ --exec npm run babel-node",
     "watch-test-server": "nodemon --watch src/server --exec npm run -s test-server"
   },
   "keywords": [
@@ -40,12 +40,12 @@
   },
   "dependencies": {
     "@cycle/dom": "^10.0.0-rc8",
-    "@cycle/history": "*",
+    "@cycle/history": "^3.0.4",
     "@cycle/http": "^9.0.0-rc2",
     "@cycle/isolate": "^1.2.0",
-    "@cycle/xstream-run": "^1.0.0",
+    "@cycle/xstream-run": "^1.0.1",
     "bcrypt": "^0.8.6",
-    "cyclic-router": "^1.0.0",
+    "cyclic-router": "^2.x.x",
     "dejavu-fonts-ttf": "^2.35.5",
     "history": "^2.1.0",
     "jsonwebtoken": "^5.7.0",
@@ -64,6 +64,6 @@
     "rx": "^4.1.0",
     "switch-path": "^1.1.6",
     "winston": "^2.2.0",
-    "xstream": "^1.0.8"
+    "xstream": "^2.x.x"
   }
 }
