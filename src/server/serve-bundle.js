@@ -3,9 +3,16 @@ import browserifyHMR from 'browserify-hmr'
 import babelify from 'babelify'
 import watchify from 'watchify'
 import watchifyMiddleWare from 'koa-watchify'
+import config from './config'
+
+let entry = './src/client.js'
+
+if (!config.serverRendering) {
+  entry = './src/client-restartable.js'
+}
 
 let bundle = browserify({
-  entries: ['./src/client.js'],
+  entries: [entry],
   fullPaths: true,
   packageCache: {},
   cache: {},

@@ -7,8 +7,14 @@ import {makeRouterDriver} from 'cyclic-router'
 import App from '../client/app'
 import {wrapVTreeWithHTMLBoilerplate, prependDoctype} from './html-boilerplate'
 import toHTML from 'snabbdom-to-html'
+import config from './config'
 
-export function* serveClient(next) {
+function* serveStatic(next) {
+  this.body = prependDoctype(toHTML(wrapVTreeWithHTMLBoilerplate([])))
+  yield next;
+}
+
+function* serveClient(next) {
 
   let host = this.request.host
   /**
@@ -55,7 +61,7 @@ export function* serveClient(next) {
 
   let wrappedAppFn = wrapAppResultWithBoilerplate(App)
 
-  const history = createServerHistory()
+  const history = createServerHistory(this.request.url)
   let {sources, sinks, run} = Cycle(wrappedAppFn, {
     DOM: makeHTMLDriver(),
     router: makeRouterDriver(history),
@@ -72,7 +78,6 @@ export function* serveClient(next) {
       complete: () => {}
     })
     run()
-    history.push(history.createLocation(this.request.url))
     history.complete()
   })
   // I need to return promise when I subscribe to HTML stream and then trigger run so it actally happens
@@ -83,3 +88,6 @@ export function* serveClient(next) {
   }
   yield next
 }
+
+let serveStrat = config.serverRendering ? serveClient : serveStatic
+export default serveStrat

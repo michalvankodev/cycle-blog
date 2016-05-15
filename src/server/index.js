@@ -3,12 +3,11 @@ import koa from 'koa'
 import mount from 'koa-mount'
 import logger from 'koa-logger'
 import winston from 'winston'
-import {serveClient} from './serve-client'
+import serveClient from './serve-client'
 import route from 'koa-route'
 import serveBundle from './serve-bundle'
 import unless from 'koa-unless'
 import favicon from 'koa-favicon'
-
 import apiApp from './api'
 
 let app = koa()
