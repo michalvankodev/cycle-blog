@@ -22,8 +22,4 @@ router.put('/:id', jwt(jwtOptions), bodyparser(), updateUser)
 router.patch('/:id', jwt(jwtOptions), bodyparser(), updateUser)
 router.delete('/:id', jwt(jwtOptions), deleteUser)
 
-// TODO Create New User
-// TODO Update User
-// TODO Update Password
-// TODO Get Multiple users
 export default router
